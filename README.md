@@ -1,6 +1,6 @@
 <span align="center">
 
-# Programmable HTTP Switch
+# Programmable HTTP Switch modified
 
 [![verified-by-homebridge](https://badgen.net/badge/homebridge/verified/purple)](https://github.com/homebridge/homebridge/wiki/Verified-Plugins)
 [![Downloads](https://img.shields.io/npm/dt/homebridge-programmable-http-switch)](https://www.npmjs.com/package/homebridge-programmable-http-switch)

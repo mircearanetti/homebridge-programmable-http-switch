@@ -22,6 +22,9 @@ export default class Server {
         this.server.get('/accessories/:accessoryIdentifier', this.getAccessory);
         this.server.get('/accessories/:accessoryIdentifier/buttons', this.getButtons);
         this.server.get('/accessories/:accessoryIdentifier/buttons/:buttonIdentifier', this.getButton);
+        this.server.get('/accessories/:accessoryIdentifier/buttons/:buttonIdentifier/sinlePress', this.putButtonSinglePress);
+        this.server.get('/accessories/:accessoryIdentifier/buttons/:buttonIdentifier/doublePress', this.putButtonLongPress);
+        this.server.get('/accessories/:accessoryIdentifier/buttons/:buttonIdentifier/longPress', this.putButtonDoublePress);
         this.server.put('/accessories/:accessoryIdentifier/buttons/:buttonIdentifier', this.putButton);
     }
 
@@ -181,6 +184,7 @@ export default class Server {
     }
 
     private putButton: Express.RequestHandler = (request, response) => {
+        
         let accessoryIdentifier = request.params.accessoryIdentifier;
         let buttonIdentifier = request.params.buttonIdentifier;
 
@@ -268,6 +272,126 @@ export default class Server {
             success: true
         });
     }
+
+    private putButtonSinglePress: Express.RequestHandler = (request, response) => {
+
+        let accessoryIdentifier = request.params.accessoryIdentifier;
+        let buttonIdentifier = request.params.buttonIdentifier;
+
+        var action = 0;
+        if (!this.getActionValidator(request, response, action))
+            return;
+
+        this.setState(accessoryIdentifier, buttonIdentifier, action);
+
+        response.json({
+            success: true
+        });
+    }
+
+    private putButtonLongPress: Express.RequestHandler = (request, response) => {
+
+        let accessoryIdentifier = request.params.accessoryIdentifier;
+        let buttonIdentifier = request.params.buttonIdentifier;
+
+        var action = 1;
+        if (!this.getActionValidator(request, response, action))
+            return;
+
+        this.setState(accessoryIdentifier, buttonIdentifier, action);
+
+        response.json({
+            success: true
+        });
+    }
+
+    private putButtonDoublePress: Express.RequestHandler = (request, response) => {
+
+
+        let accessoryIdentifier = request.params.accessoryIdentifier;
+        let buttonIdentifier = request.params.buttonIdentifier;
+
+        var action = 2;
+        if (!this.getActionValidator(request, response, action))
+            return;
+
+        this.setState(accessoryIdentifier, buttonIdentifier, action);
+
+        response.json({
+            success: true
+        });
+    }
+
+    private getActionValidator = (request:any, response:any, action:number) => {
+
+        let accessoryIdentifier = request.params.accessoryIdentifier;
+        let buttonIdentifier = request.params.buttonIdentifier;
+
+        if (accessoryIdentifier == null) {
+            response.status(400).json({
+                success: false,
+                error: {
+                    code: 400,
+                    message: "Missing required parameter 'accessoryIdentifier'."
+                }
+            });
+
+            return false;
+        }
+
+        if (buttonIdentifier == null) {
+            response.status(400).json({
+                success: false,
+                error: {
+                    code: 400,
+                    message: "Missing required parameter 'buttonIdentifier'."
+                }
+            });
+
+            return false;
+        }
+
+        let button = this.button(accessoryIdentifier, buttonIdentifier);
+
+        if (button == null) {
+            response.status(404).json({
+                success: false,
+                error: {
+                    code: 404,
+                    message: `Couldn't find button with identifier '${accessoryIdentifier}' for accessory with identifier '${accessoryIdentifier}'.`
+                }
+            });
+
+            return false;
+        }
+
+        if (action == null) {
+            response.status(400).json({
+                success: false,
+                error: {
+                    code: 400,
+                    message: `Invalid action '${action}'.`
+                }
+            });
+
+            return false;
+        }
+
+        if (!button.supportedActions.map(this.action).includes(action)) {
+            response.status(400).json({
+                success: false,
+                error: {
+                    code: 400,
+                    message: `Button with identifier '${buttonIdentifier}' does not support action '${Action[action]}'.`
+                }
+            });
+
+            return false;
+        }
+
+        return true;
+    }
+
 
     action = (action: string | number): Action | undefined => {
         if (typeof action == 'string') {
