@@ -22,7 +22,7 @@ export default class Server {
         this.server.get('/accessories/:accessoryIdentifier', this.getAccessory);
         this.server.get('/accessories/:accessoryIdentifier/buttons', this.getButtons);
         this.server.get('/accessories/:accessoryIdentifier/buttons/:buttonIdentifier', this.getButton);
-        this.server.get('/accessories/:accessoryIdentifier/buttons/:buttonIdentifier/sinlePress', this.putButtonSinglePress);
+        this.server.get('/accessories/:accessoryIdentifier/buttons/:buttonIdentifier/singlePress', this.putButtonSinglePress);
         this.server.get('/accessories/:accessoryIdentifier/buttons/:buttonIdentifier/doublePress', this.putButtonLongPress);
         this.server.get('/accessories/:accessoryIdentifier/buttons/:buttonIdentifier/longPress', this.putButtonDoublePress);
         this.server.put('/accessories/:accessoryIdentifier/buttons/:buttonIdentifier', this.putButton);
@@ -322,7 +322,7 @@ export default class Server {
         });
     }
 
-    private getActionValidator = (request:any, response:any, action:number) => {
+    private getActionValidator = (request:any, response:any, action:number) => {    
 
         let accessoryIdentifier = request.params.accessoryIdentifier;
         let buttonIdentifier = request.params.buttonIdentifier;
